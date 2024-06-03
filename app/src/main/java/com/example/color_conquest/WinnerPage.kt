@@ -1,5 +1,7 @@
 package com.example.color_conquest
 
+import android.annotation.SuppressLint
+import android.media.MediaPlayer
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -21,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +38,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun WinnerPage(){
     val context = LocalContext.current
+
     val preferencesManager = remember { PreferencesManager(context) }
     Box(
         modifier = Modifier
@@ -155,6 +159,7 @@ fun WinnerPage(){
                     .align(Alignment.BottomCenter),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xff01c1f0)),
                 onClick = {
+                    updateHighScore(preferencesManager, winner.value, if (winner.value == playerOne.value.uppercase()) playerOnePoints.intValue else playerTwoPoints.intValue)
                     reset()
                     pageFlag.intValue = 0
                     if (winner.value != ""){
@@ -163,6 +168,7 @@ fun WinnerPage(){
                     winner.value = ""
                     playerOneWins.intValue = 0
                     playerTwoWins.intValue = 0
+                    pause.value = false
                 }
             ) {
                 Text(
@@ -183,6 +189,7 @@ fun WinnerPage(){
                     .align(Alignment.BottomCenter),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xffff5f57)),
                 onClick = {
+                    updateHighScore(preferencesManager, winner.value, if (winner.value == playerOne.value.uppercase()) playerOnePoints.intValue else playerTwoPoints.intValue)
                     reset()
                     playerOne.value = ""
                     playerTwo.value = ""
@@ -194,6 +201,7 @@ fun WinnerPage(){
                     winner.value = ""
                     playerOneWins.intValue = 0
                     playerTwoWins.intValue = 0
+                    pause.value = false
                 }
             ) {
                 Text(

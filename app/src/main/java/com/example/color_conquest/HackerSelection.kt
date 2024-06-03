@@ -1,6 +1,18 @@
 package com.example.color_conquest
 
+import android.media.MediaPlayer
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
@@ -25,6 +38,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -38,9 +52,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -48,6 +64,7 @@ import androidx.navigation.NavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HackerSelection(navController: NavController){
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -65,6 +82,7 @@ fun HackerSelection(navController: NavController){
             painter = painterResource(id = R.drawable.matrix),
             contentDescription = "matrix"
         )
+
         Text(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -74,6 +92,8 @@ fun HackerSelection(navController: NavController){
             color = Color.White,
             fontFamily = family
         )
+
+        //grid size selector
         Row(
             modifier = Modifier
                 .offset(y = 120.dp),
@@ -162,6 +182,7 @@ fun HackerSelection(navController: NavController){
             }
         }
 
+        //timed mode selector
         val hmode = remember { mutableIntStateOf(0) }
         Box(
             modifier = Modifier
@@ -181,11 +202,11 @@ fun HackerSelection(navController: NavController){
                     modifier = Modifier.background(Color.Transparent)
                 ){
                     val color by animateColorAsState(
-                        targetValue = if(hmode.intValue == 0) Color(0xff006800) else Color(0xff35b43f),
+                        targetValue = if(!(timedMode.value)) Color(0xff006800) else Color(0xff35b43f),
                         label = "green and black"
                     )
                     Button(
-                        onClick = { hmode.intValue = 0 },
+                        onClick = { hmode.intValue = 0; timedMode.value = false },
                         modifier = Modifier
                             .size(50.dp),
                         shape = RoundedCornerShape(100),
@@ -215,11 +236,11 @@ fun HackerSelection(navController: NavController){
 
                 Box(modifier = Modifier.background(Color.Transparent)){
                     val color by animateColorAsState(
-                        targetValue = if(hmode.intValue == 1) Color(0xff006800) else Color(0xff35b43f),
+                        targetValue = if(timedMode.value) Color(0xff006800) else Color(0xff35b43f),
                         label = "green and black"
                     )
                     Button(
-                        onClick = { hmode.intValue = 1 },
+                        onClick = { hmode.intValue = 1; timedMode.value = true },
                         modifier = Modifier
                             .size(50.dp),
                         shape = RoundedCornerShape(100),
@@ -246,6 +267,102 @@ fun HackerSelection(navController: NavController){
             }
         }
 
+        //timed mode duration selector
+        AnimatedVisibility(
+            visible = timedMode.value,
+            modifier = Modifier
+                .offset(x = 24.dp, y = (-240).dp)
+                .background(Color.Transparent)
+                .align(Alignment.BottomStart),
+            enter = slideInHorizontally (
+                animationSpec = tween(
+                    durationMillis = 700
+                )
+            ),
+            exit = slideOutHorizontally(
+                animationSpec = tween(
+                    durationMillis = 700
+                )
+            )
+        ){
+            Box(
+            ){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        text = "Minutes:",
+                        fontFamily = family,
+                        fontSize = 30.sp,
+                        color = Color.White
+                    )
+                    TextField(
+                        modifier = Modifier
+                            .width(120.dp),
+                        textStyle = LocalTextStyle.current.copy(color = Color.White),
+                        value = if (timeMinutes.intValue != 0) timeMinutes.intValue.toString() else "",
+                        onValueChange = {
+                            if(it != ""){
+                                timeMinutes.intValue = it.toInt()
+                            } else {
+                                timeMinutes.intValue = 0
+                            }
+                        },
+                        label = {
+                            Text(
+                                text = "Enter",
+                                color =  Color.White,
+                                fontFamily = family
+                            )
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color.DarkGray
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                }
+
+                Row (
+                    modifier = Modifier
+                        .offset(y = 80.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text = "Seconds:",
+                        fontFamily = family,
+                        fontSize = 30.sp,
+                        color = Color.White
+                    )
+                    TextField(
+                        modifier = Modifier
+                            .width(120.dp),
+                        textStyle = LocalTextStyle.current.copy(color = Color.White),
+                        value = if (timeSeconds.intValue != 0) timeSeconds.intValue.toString() else "",
+                        onValueChange = {
+                            if(it != ""){
+                                timeSeconds.intValue = it.toInt()
+                            } else {
+                                timeSeconds.intValue = 0
+                            }
+                        },
+                        label = {
+                            Text(
+                                text = "Enter",
+                                color =  Color.White,
+                                fontFamily = family
+                            )
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            containerColor = Color.DarkGray
+                        ),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                }
+            }
+        }
+
+        //best of selector
         Text(
             modifier = Modifier
                 .offset(x = 24.dp, y = 30.dp)
@@ -260,6 +377,7 @@ fun HackerSelection(navController: NavController){
                 .offset(x = 20.dp, y = 30.dp)
                 .align(Alignment.Center)
                 .width(120.dp),
+            textStyle = LocalTextStyle.current.copy(color = Color.White),
             value = if (bestOf.intValue != 0) bestOf.intValue.toString() else "",
             onValueChange = {
                 if(it != ""){
@@ -277,10 +395,22 @@ fun HackerSelection(navController: NavController){
             },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = Color.DarkGray
-            )
+            ),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
+
+        //play button
         Button(
-            onClick = { navController.navigate(Screen.PlayerInformation.route) },
+            onClick = {
+                if ((bestOf.intValue%2 == 1) or (bestOf.intValue == 0)){
+                    navController.navigate(Screen.PlayerInformation.route)
+                }
+                else{
+                    val error = MediaPlayer.create(context, R.raw.error)
+                    if (mode.intValue == 2) error.start()
+                    Toast.makeText(context, "best-of must be an odd number", Toast.LENGTH_SHORT).show()
+                }
+            },
             modifier = Modifier
                 .offset(y = (-24).dp)
                 .align(Alignment.BottomCenter),

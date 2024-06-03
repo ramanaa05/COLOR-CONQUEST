@@ -95,7 +95,15 @@ fun PlayerInformation(navController: NavController){
                 .background(color = Color.Transparent)
         ){
             Button(
-                onClick = { navController.navigate(Screen.TheGamePage.route)},
+                onClick = {
+                    if(playerOne.value == ""){
+                        playerOne.value = "Player 1"
+                    }
+                    if(playerTwo.value == ""){
+                        playerTwo.value = "Player 2"
+                    }
+                    navController.navigate(Screen.TheGamePage.route)
+                },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 96.dp)

@@ -10,7 +10,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Color_conquestTheme {
+            Color_conquestTheme(darkTheme = darkTheme.value) {
                 remember {
                     playerTwo
                     playerOne
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     CloseButton()
                 }
                 else if(pageFlag.intValue == 4){
-                    ScoreBoard()
+                    HighScore()
                 }
                 else if (pageFlag.intValue == 5){
                     PowerUps()

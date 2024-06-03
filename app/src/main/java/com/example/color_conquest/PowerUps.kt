@@ -1,5 +1,6 @@
 package com.example.color_conquest
 
+import android.media.MediaPlayer
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,7 +37,10 @@ var inv: Float = 0.0f
 
 @Composable
 fun PowerUps(){
-    val powers = listOf(R.drawable.world, R.drawable.extratime, R.drawable.plusone)
+    val powers = mutableListOf(R.drawable.world, R.drawable.extratime, R.drawable.plusone)
+    val powersUntimed = mutableListOf(R.drawable.world, R.drawable.plusone)
+    val context = LocalContext.current
+
     var color: Color
     var alignment: Alignment
     var offset: Int
@@ -73,16 +78,18 @@ fun PowerUps(){
         ){
             Button(
                 onClick = {
+                    val twinkle = MediaPlayer.create(context, R.raw.twinkle)
+                    if (mode.intValue == 2) twinkle.start()
                     grantedTo.intValue = currentLoss.intValue
-                    power.value = powers.random()
+                    if(timedMode.value) power.value = powers.random() else power.value = powersUntimed.random()
                     touched.value = true
                     poweInfo.value = true
                     if(power.value == powers[0]){
-                        powerUpDescription.value = "You have received the ability to click on any tile regardless of whether it is your first turn. Note that you cannot click on tiles conquered by the other player and this can only be use once!!"
+                        powerUpDescription.value = "You have received the ability to click on any tile regardless of whether it is your first turn(replicate first turn). Note that you cannot click on tiles conquered by the other player and this can only be use once!!"
                         grantedPowerUp.intValue = 1
                     }
                     else if (power.value == powers[1]){
-                        powerUpDescription.value = "You have been granted one min of extra time"
+                        powerUpDescription.value = "You have been granted 10 seconds of extra time"
                         grantedPowerUp.intValue = 2
                     }
                     else{
@@ -116,9 +123,9 @@ fun PowerupInfo(){
     AlertDialog(
         modifier = Modifier
             .rotate(inv),
-        onDismissRequest = { pageFlag.intValue = 0; poweInfo.value = false; currentLoss.intValue = 0 },
+        onDismissRequest = { pageFlag.intValue = 0; poweInfo.value = false; currentLoss.intValue = 0; pause.value = false },
         confirmButton = {
-            TextButton(onClick = { pageFlag.intValue = 0; poweInfo.value = false; currentLoss.intValue = 0 }) {
+            TextButton(onClick = { pageFlag.intValue = 0; poweInfo.value = false; currentLoss.intValue = 0; pause.value = false }) {
                 Text(text = "Ok")
             }
         },

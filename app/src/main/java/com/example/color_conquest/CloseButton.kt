@@ -1,5 +1,6 @@
 package com.example.color_conquest
 
+import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,16 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CloseButton() {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Transparent.copy(alpha = 0.6f))
-            .clickable { pageFlag.intValue = 0 }
+            .clickable { pageFlag.intValue = 0; pause.value = false }
     ) {
         Box(
             modifier = Modifier
@@ -44,6 +47,8 @@ fun CloseButton() {
                     onClick = {
                         reset()
                         pageFlag.intValue = 0
+                        pause.value = false
+                        setTime.value = true
                     },
                     modifier = Modifier
                         .clip(RoundedCornerShape(25))
@@ -66,7 +71,7 @@ fun CloseButton() {
                     .align(Alignment.CenterStart)
             ) {
                 Button(
-                    onClick = { pageFlag.intValue = 0 },
+                    onClick = { pageFlag.intValue = 0; pause.value = false },
                     modifier = Modifier
                         .clip(RoundedCornerShape(25))
                         .size(100.dp)
@@ -91,11 +96,16 @@ fun CloseButton() {
             ) {
                 Button(
                     onClick = {
+                        val swoosh = MediaPlayer.create(context, R.raw.swoosh)
+                        if (mode.intValue == 2) swoosh.start()
                         reset()
                         playerOne.value = ""
                         playerTwo.value = ""
                         pageFlag.intValue = 0
                         toHome.intValue = 1
+                        playerOneWins.intValue = 0
+                        playerTwoWins.intValue = 0
+                        pause.value = false
                     },
                     modifier = Modifier
                         .clip(RoundedCornerShape(25))

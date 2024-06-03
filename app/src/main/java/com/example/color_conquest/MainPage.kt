@@ -1,6 +1,11 @@
 package com.example.color_conquest
 
+import android.media.MediaPlayer
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,19 +19,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -39,7 +48,7 @@ import androidx.navigation.NavController
 @Composable
 fun MainPage(navController: NavController) {
     //The background
-
+    val context = LocalContext.current
     val fontFamily = FontFamily(
         Font(R.font.lackeral, FontWeight.ExtraBold)
     )
@@ -55,11 +64,20 @@ fun MainPage(navController: NavController) {
                 )
             )
     ){
+        //dark mode toggle
+        AnimatedVisibility(
+            visible = (mode.intValue != 0),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 10.dp, end = 5.dp),
+            ){
+            Switch(checked = darkTheme.value, onCheckedChange = {darkTheme.value = !darkTheme.value})
+        }
 
         //tri-state toggle
         Box(
             modifier = Modifier
-                .padding(top = 8.dp, start = 20.dp)
+                .offset(y = 8.dp, x = 85.dp)
                 .background(Color.Transparent)
         ){
             Box(
@@ -85,6 +103,13 @@ fun MainPage(navController: NavController) {
                         colors = ButtonDefaults.buttonColors(containerColor = color)
                     ){
                     }
+                    Image(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.Center),
+                        painter = painterResource(id = R.drawable.glasses),
+                        contentDescription = "glasses"
+                    )
                 }
 
                 Spacer(modifier = Modifier.size(50.dp))
@@ -135,13 +160,45 @@ fun MainPage(navController: NavController) {
             }
         }
 
-        Button(
-            onClick = { pageFlag.intValue = 4 },
+        AnimatedVisibility(
+            visible = ((mode.intValue == 1) or (mode.intValue == 2)),
             modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(5.dp)
-        ) {
-            Text(text = "WIN")
+                .align(Alignment.BottomStart)
+                .padding(bottom = 96.dp, start = 12.dp),
+            enter = expandIn (
+                animationSpec = tween(
+                    durationMillis = 300
+                )
+            ),
+            exit = shrinkOut (
+                animationSpec = tween(
+                    durationMillis = 300
+                )
+            )
+        ){
+            Box{
+                Button(
+                    onClick = {
+                        val swoosh = MediaPlayer.create(context, R.raw.swoosh)
+                        if(mode.intValue == 2) swoosh.start()
+                        pageFlag.intValue = 4
+                    },
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .shadow(5.dp, CircleShape)
+                        .size(78.dp),
+                    shape = CircleShape,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xffC0C0C0))
+                ) {
+                }
+                Image(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .size(50.dp),
+                    painter = painterResource(id = R.drawable.podium),
+                    contentDescription = "leader board"
+                )
+            }
         }
         //COLOR CONQUEST TITLE
         Text(
@@ -185,7 +242,7 @@ fun MainPage(navController: NavController) {
                 .background(color = Color.Transparent)
         ){
             val nav: String
-            if (mode.intValue == 1){
+            if ((mode.intValue == 1) or (mode.intValue == 2)){
                 nav = Screen.HackerSelection.route
             }else{
                 nav = Screen.PlayerInformation.route
@@ -194,7 +251,6 @@ fun MainPage(navController: NavController) {
                 onClick = {navController.navigate(nav)},
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .offset(x = (-18).dp)
                     .padding(bottom = 96.dp)
                     .shadow(5.dp, RoundedCornerShape(36.dp)),
                 colors = ButtonDefaults.buttonColors(

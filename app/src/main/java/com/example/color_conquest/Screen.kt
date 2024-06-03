@@ -5,6 +5,7 @@ sealed class Screen(val route: String) {
     data object PlayerInformation : Screen("player_information")
     data object TheGamePage : Screen("the_game_page")
     data object HackerSelection: Screen("hacker_selection")
+    data object Timer: Screen("timer")
 
     fun withArgs(vararg args: String): String{
         return buildString {

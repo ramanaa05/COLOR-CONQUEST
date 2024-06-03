@@ -1,6 +1,7 @@
 package com.example.color_conquest
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
@@ -22,6 +23,24 @@ fun Navigation(){
     NavHost(navController = navController, startDestination = Screen.MainPage.route){
         composable(
             route = Screen.MainPage.route,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            }
         ){
             MainPage(navController = navController)
         }
@@ -29,15 +48,20 @@ fun Navigation(){
             route = Screen.PlayerInformation.route,
             enterTransition = {
                 slideIntoContainer(
-                    animationSpec = spring(0.3f),
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
                     towards = AnimatedContentTransitionScope.SlideDirection.Start
                 )
             },
             exitTransition = {
-                fadeOut(
+                slideOutOfContainer(
                     animationSpec = tween(
-                        durationMillis = 1000
-                    )
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
                 )
             }
         ){
@@ -46,15 +70,21 @@ fun Navigation(){
         composable(
             route = Screen.TheGamePage.route,
             enterTransition = {
-                expandIn(
-                    animationSpec = tween(300),
-                    expandFrom = Alignment.Center
+                slideIntoContainer(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
                 )
             },
             exitTransition = {
-                shrinkOut (
-                    animationSpec = tween(300),
-                    shrinkTowards = Alignment.Center
+                slideOutOfContainer(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
                 )
             }
         ){
@@ -62,6 +92,24 @@ fun Navigation(){
         }
         composable(
             route = Screen.HackerSelection.route,
+            enterTransition = {
+                slideIntoContainer(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    animationSpec = tween(
+                        durationMillis = 400,
+                        easing = LinearEasing
+                    ),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            }
         ){
             HackerSelection(navController = navController)
         }

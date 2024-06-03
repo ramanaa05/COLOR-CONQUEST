@@ -47,7 +47,7 @@ fun ScoreBoard(){
                         Text(
                             modifier = Modifier
                                 .padding(start = 5.dp, end = 5.dp),
-                            text = preferencesManager.getData(name, 0).toString(),
+                            text = preferencesManager.getInteger(name, 0).toString(),
                             fontSize = 20.sp
                         )
                     }

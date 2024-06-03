@@ -150,7 +150,7 @@ fun modifyTile(n: Int){
     else{
         playerOnePoints.intValue = 0
         playerTwoPoints.intValue = 0
-        for (i in 0..24){
+        for (i in 0..<(N.intValue*N.intValue)){
             if (belongsTo[i] == 1){
                 playerOnePoints.intValue += tile[i]
             }
@@ -181,10 +181,17 @@ fun reset(){
 fun updateScoreBoard(pm: PreferencesManager, player: String){
     var keys: MutableSet<String> = pm.getAllKeys()
     if (player in keys){
-        var wins = pm.getData(player, 0)
-        pm.saveData(player, wins+1)
+        var wins = pm.getInteger(player, 0)
+        pm.saveInteger(player, wins+1)
     }
     else{
-        pm.saveData(player, 1)
+        pm.saveInteger(player, 1)
+    }
+}
+
+fun updateHighScore(pm: PreferencesManager, player: String, score: Int){
+    if (pm.getInteger("highScore", 0) < score){
+        pm.saveInteger("highScore", score)
+        pm.saveString("highScorePlayer", player)
     }
 }
